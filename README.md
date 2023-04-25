@@ -2,7 +2,7 @@ Refine JS
 =========
 
 An OpenRefine extension which adds support for Javascript as an expression language.
-It works with OpenRefine 3.6+.
+It works with OpenRefine 3.6 and 3.7.
 
 [Download the latest release](https://github.com/wetneb/refine-js/releases/latest)
 
