@@ -20,7 +20,7 @@
   </licenses>
 
   <properties>
-    <openrefine.version>3.6-SNAPSHOT</openrefine.version>
+    <openrefine.version>4.0-SNAPSHOT</openrefine.version>
     <jackson.version>2.12.3</jackson.version>
     <rhino.version>1.7.13</rhino.version>
     <surefire.version>2.22.2</surefire.version>

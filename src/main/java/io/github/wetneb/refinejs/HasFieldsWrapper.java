@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import org.mozilla.javascript.Scriptable;
 
-import com.google.refine.expr.HasFields;
+import org.openrefine.expr.HasFields;
 
 /**
  * Wraps a Java object meant to be interacted with via GREL
@@ -16,11 +16,9 @@ import com.google.refine.expr.HasFields;
 public class HasFieldsWrapper implements Scriptable {
     
     protected final HasFields obj;
-    protected final Properties bindings;
     
-    public HasFieldsWrapper(HasFields obj, Properties bindings) {
+    public HasFieldsWrapper(HasFields obj) {
         this.obj = obj;
-        this.bindings = bindings;
     }
 
     @Override
@@ -30,9 +28,9 @@ public class HasFieldsWrapper implements Scriptable {
 
     @Override
     public Object get(String name, Scriptable start) {
-        Object returnValue = obj.getField(name, bindings);
+        Object returnValue = obj.getField(name);
         if (returnValue instanceof HasFields) {
-            return new HasFieldsWrapper((HasFields) returnValue, bindings);
+            return new HasFieldsWrapper((HasFields) returnValue);
         } else {
             return returnValue;
         }
@@ -45,7 +43,7 @@ public class HasFieldsWrapper implements Scriptable {
 
     @Override
     public boolean has(String name, Scriptable start) {
-        return obj.getField(name, bindings) != null;
+        return obj.getField(name) != null;
     }
 
     @Override

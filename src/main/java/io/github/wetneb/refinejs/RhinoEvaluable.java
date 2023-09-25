@@ -9,17 +9,21 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
-import com.google.refine.expr.Evaluable;
-import com.google.refine.expr.HasFields;
+import org.openrefine.expr.Evaluable;
+import org.openrefine.expr.HasFields;
 
 public class RhinoEvaluable implements Evaluable {
     
     protected final ContextFactory contextFactory;
     protected final Function function;
+    protected final String source;
+    protected final String languagePrefix;
     
-    public RhinoEvaluable(ContextFactory contextFactory, Function function) {
+    public RhinoEvaluable(ContextFactory contextFactory, Function function, String source, String languagePrefix) {
         this.contextFactory = contextFactory;
         this.function = function;
+        this.source = source;
+        this.languagePrefix = languagePrefix;
     }
 
     public static RhinoParser createParser() {
@@ -37,11 +41,11 @@ public class RhinoEvaluable implements Evaluable {
                         // value
                         bindings.get("value"),
                         // cell
-                        new HasFieldsWrapper((HasFields)bindings.get("cell"), bindings),
+                        new HasFieldsWrapper((HasFields)bindings.get("cell")),
                         // cells
-                        new HasFieldsWrapper((HasFields)bindings.get("cells"), bindings),
+                        new HasFieldsWrapper((HasFields)bindings.get("cells")),
                         // row
-                        new HasFieldsWrapper((HasFields)bindings.get("row"), bindings),
+                        new HasFieldsWrapper((HasFields)bindings.get("row")),
                         // rowIndex
                         bindings.get("rowIndex")
                 };
@@ -53,6 +57,16 @@ public class RhinoEvaluable implements Evaluable {
             return null;
         }
         return returnValue;
+    }
+
+    @Override
+    public String getSource() {
+        return source;
+    }
+
+    @Override
+    public String getLanguagePrefix() {
+        return languagePrefix;
     }
 
 }

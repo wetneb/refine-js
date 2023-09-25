@@ -2,7 +2,7 @@ package io.github.wetneb.refinejs;
 
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.ParsingException;
+import org.openrefine.expr.ParsingException;
 
 public class RhinoParserTests {
     
@@ -10,11 +10,11 @@ public class RhinoParserTests {
 
     @Test(expectedExceptions = ParsingException.class)
     public void testInvalidSource() throws ParsingException {
-        SUT.parse("this is an invalid expression");
+        SUT.parse("this is an invalid expression", "js");
     }
     
     @Test
     public void testValidSource() throws ParsingException {
-        SUT.parse("return value");
+        SUT.parse("return value", "js");
     }
 }

@@ -6,8 +6,8 @@ import org.mozilla.javascript.EvaluatorException;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 
-import com.google.refine.expr.LanguageSpecificParser;
-import com.google.refine.expr.ParsingException;
+import org.openrefine.expr.LanguageSpecificParser;
+import org.openrefine.expr.ParsingException;
 
 
 public class RhinoParser implements LanguageSpecificParser {
@@ -15,7 +15,7 @@ public class RhinoParser implements LanguageSpecificParser {
     ContextFactory contextFactory = ContextFactory.getGlobal();
 
     @Override
-    public RhinoEvaluable parse(String s) throws ParsingException {
+    public RhinoEvaluable parse(String s, String languagePrefix) throws ParsingException {
         String source = "function(value, cell, cells, row, rowIndex) {\n" + s + "}";
         ContextAction<Function> contextAction = new ContextAction<Function>() {
 
@@ -31,7 +31,7 @@ public class RhinoParser implements LanguageSpecificParser {
         
         try {
             Function function = contextFactory.call(contextAction);
-            return new RhinoEvaluable(contextFactory, function);
+            return new RhinoEvaluable(contextFactory, function, s, languagePrefix);
         } catch(EvaluatorException e) {
             throw new ParsingException(e.getLocalizedMessage());
         }

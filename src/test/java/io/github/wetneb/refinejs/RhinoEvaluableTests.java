@@ -1,19 +1,16 @@
 package io.github.wetneb.refinejs;
 
+import java.util.Arrays;
 import java.util.Properties;
 
+import org.openrefine.model.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.refine.expr.CellTuple;
-import com.google.refine.expr.ParsingException;
-import com.google.refine.model.Cell;
-import com.google.refine.model.Column;
-import com.google.refine.model.ModelException;
-import com.google.refine.model.Project;
-import com.google.refine.model.Recon;
-import com.google.refine.model.ReconCandidate;
-import com.google.refine.model.Row;
+import org.openrefine.expr.CellTuple;
+import org.openrefine.expr.ParsingException;
+import org.openrefine.model.recon.Recon;
+import org.openrefine.model.recon.ReconCandidate;
 
 public class RhinoEvaluableTests {
     
@@ -21,7 +18,7 @@ public class RhinoEvaluableTests {
     
     protected RhinoEvaluable parse(String source) {
         try {
-            return parser.parse(source);
+            return parser.parse(source, "js");
         } catch (ParsingException e) {
             Assert.fail("Parsing the expression raised an unexpected syntax error: "+e.getLocalizedMessage());
             return null;
@@ -45,18 +42,19 @@ public class RhinoEvaluableTests {
     @Test
     public void testFields() throws ModelException {
         Properties bindings = new Properties();
-        Project project = new Project();
-        project.columnModel.addColumn(0, new Column(0, "firstColumn"), true);
-        project.columnModel.addColumn(1, new Column(1, "secondColumn"), true);
+        ColumnModel columnModel = new ColumnModel(Arrays.asList(
+                new ColumnMetadata("firstColumn"),
+                new ColumnMetadata("secondColumn")
+        ));
 
-        Row row = new Row(2);
-        row.setCell(0, new Cell("one", null));
-        row.setCell(1, new Cell("1", null));
+        Row row = new Row(Arrays.asList(
+                new Cell("one", null),
+                new Cell("1", null)));
 
         bindings.put("columnName", "secondColumn");
         bindings.put("rowIndex", "0");
         bindings.put("value", 1);
-        bindings.put("cells", new CellTuple(project, row));
+        bindings.put("cells", new CellTuple(columnModel, row));
         
         Object result = parse("return cells['firstColumn'].value").evaluate(bindings);
         Assert.assertEquals(result, "one");
@@ -64,10 +62,10 @@ public class RhinoEvaluableTests {
     
     @Test
     public void testNestedFields() {
-        Recon recon = Recon.makeWikidataRecon(1234L);
         ReconCandidate reconCandidate = new ReconCandidate("Q5", "human", null, 100.0);
-        recon.addCandidate(reconCandidate);
-        recon.match = reconCandidate;
+        Recon recon = Recon.makeWikidataRecon(1234L)
+                .withCandidate(reconCandidate)
+                .withMatch(reconCandidate);
         Cell cell = new Cell("some value", recon);
         
         Properties bindings = new Properties();
